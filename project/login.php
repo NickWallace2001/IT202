@@ -20,6 +20,9 @@ if (isset($_POST["login"])) {
     if (isset($_POST["password"])) {
         $password = $_POST["password"];
     }
+    if (isset($_POST["username"])) {
+	$username = $_POST["username"];
+    }
     $isValid = true;
 /*
     if (!isset($email) || !isset($password)) {
@@ -29,10 +32,12 @@ if (isset($_POST["login"])) {
 */
     if (empty($username) && empty($email)){
 	$isValid = false;
+	flash("Email or Username needs to be filled");
     }
 
     if (empty($password)){
 	$isValid = false;
+	flash("Enter a password");
     }
 
     if (!empty($email) && !strpos($email, "@")) {

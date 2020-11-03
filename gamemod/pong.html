@@ -19,6 +19,7 @@ var rightPaddle;
 var ball;
 var paddleWidth = 25;
 var paddleHeight = 100;
+var leftPaddleHeight = 100;
 var ballSize = 10;
 var ballSpeed = 2;
 var paddleSpeed = 2;
@@ -50,9 +51,10 @@ function init() {
     canvas = document.getElementById("board");
     if (canvas.getContext) {
         context = canvas.getContext("2d");
-        leftPaddle = makeRect(25, canvas.height / 2 - paddleHeight / 2, paddleWidth, paddleHeight, 5, '#BC0000');
+	advantage();
+        leftPaddle = makeRect(25, canvas.height / 2 - paddleHeight / 2, paddleWidth, leftPaddleHeight, 5, '#BC0000');
         rightPaddle = makeRect(canvas.width - paddleWidth - 25, canvas.height / 2 - paddleHeight / 2, paddleWidth, paddleHeight, 5, '#0000BC');
-        ball = makeRect(0, 0, ballSize, ballSize, ballSpeed, '#000000');
+	createBall();
         drawables.push(leftPaddle);
         drawables.push(rightPaddle);
         drawables.push(ball);
@@ -63,6 +65,21 @@ function init() {
         canvas.focus();
     }
 }
+
+//create ball
+function createBall(){
+	ballSize = Math.floor(Math.random() * 30) + 10;
+	ball = makeRect(0, 0, ballSize, ballSize, ballSpeed, '#000000');
+}
+
+//player advantage calculation
+function advantage(){
+	var i = Math.floor(Math.random() * 10);
+	if (i > 5){
+		leftPaddleHeight = 150;
+	} 
+}	
+
 function resetBall() {
     ball.x = canvas.width / 2 - ball.w / 2;
     ball.y = canvas.height / 2 - ball.w / 2;

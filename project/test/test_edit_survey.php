@@ -18,19 +18,20 @@ if(isset($_POST["save"])){
 	$user = get_user_id();
 	$db = getDB();
 	if(isset($id)){
-		$stmt = $db->prepare("UPDATE Survey set title=:title, description=:description, visibility=:visibility where id=:id");
+		$stmt = $db->prepare("UPDATE Survey set title=:title, description=:description, visibility=:visibility where id=:id AND Survey.user_id=:user_id");
 		$r = $stmt->execute([
 			":title"=>$title,
 			":description"=>$description,
 			":visibility"=>$visibility,
-			":id"=>$id
+			":id"=>$id,
+            ":user_id=>$user"
 		]);
 		if($r){
 			flash("Updated successfully with id: " . $id);
 		}
 		else{
 			$e = $stmt->errorInfo();
-			flash("Error updating: " . var_export($e, true));
+			flash("Error updating: You are not the owner");// . var_export($e, true));
 		}
 	}
 	else{

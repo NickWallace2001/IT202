@@ -1,5 +1,4 @@
-<?php require_once(__DIR__ . "/../partials/nav.php");?>
-<?php
+<?php require_once(__DIR__ . "/../partials/nav.php");
 if (!has_role("Admin")){
     flash("You don't have permission to access this page");
     die(header("Location: ../login.php"));
@@ -8,22 +7,17 @@ if (!has_role("Admin")){
 <?php
 $query = "";
 $results = [];
-$visibility = 0;
 if (isset($_POST["query"])){
     $query = $_POST["query"];
 }
 if (isset($_POST["search"]) && !empty($query)){
     $db = getDB();
-    $stmt = $db->prepare("SELECT visibility from Survey where Survey.visibility = :visibility");
-    $stmt->execute([":visibility" => $visibility]);
-    if (getVisibility($visibility) == 0 || getVisibility($visibility) == 1){
-        $stmt = $db->prepare("SELECT id, title, description, user_id, Users.id FROM Survey where user_id = Users.id AND title like :q LIMIT 10");
-        $r = $stmt->execute([":q" => "%$query%"]);
-    }
-    elseif (getVisibility($visibility) == 2) {
-        $stmt = $db->prepare("SELECT id, title, description, visibility from Survey WHERE title like :q LIMIT 10");
-        $r = $stmt->execute([":q" => "%$query%"]);
-    }
+    $user = get_user_id();
+    $stmt = $db->prepare("SELECT * FROM Survey Where (visibility = 2 OR (visibility < 2 and Survey.user_id = :user_id)) AND Survey.title like :q");
+    $r = $stmt->execute([
+        ":user_id" => $user,
+        ":q" => "%$query%"
+    ]);
     if ($r) {
         $results = $stmt->fetchALL(PDO::FETCH_ASSOC);
     }
@@ -54,7 +48,9 @@ if (isset($_POST["search"]) && !empty($query)){
                 <div><?php getVisibility($r["visibility"]); ?></div>
             </div>
             <div>
+                <?php if ($r["user_id"] == get_user_id()):?>
                 <a type="button" href="test_edit_survey.php?id=<?php safer_echo($r['id']); ?>">Edit</a>
+                <?php endif; ?>
                 <a type="button" href="test_view_survey.php?id=<?php safer_echo($r['id']); ?>">View</a>
             </div>
             <?php endforeach; ?>

@@ -86,4 +86,11 @@ function getVisibility($n){
 			break;
 	}
 }
+
+function getURL($path){
+    if (substr($path, 0, 1) == "/"){
+        return $path;
+    }
+    return $_SERVER["CONTEXT_PREFIX"] . "/it202/repo/project/$path";
+}
 ?>

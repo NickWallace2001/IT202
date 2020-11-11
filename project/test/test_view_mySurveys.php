@@ -9,7 +9,7 @@ $results = [];
 
 $db = getDB();
 $user = get_user_id();
-$stmt = $db->prepare("SELECT * FROM Survey Where Survey.user_id = :user_id");
+$stmt = $db->prepare("SELECT * FROM Survey Where Survey.user_id = :user_id LIMIT 10");
 $r = $stmt->execute([":user_id" => $user]);
 if ($r) {
     $results = $stmt->fetchALL(PDO::FETCH_ASSOC);

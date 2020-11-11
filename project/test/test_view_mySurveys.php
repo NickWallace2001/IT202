@@ -9,22 +9,19 @@ $results = [];
 if (isset($_GET["id"])){
     $id = $_GET["id"];
 }
-$id=0;
-//if (isset($id)){
+
+if (isset($id)){
     $db = getDB();
     $user = get_user_id();
-    $stmt = $db->prepare("SELECT * FROM Survey Where (Survey.user_id = :user_id) AND Survey.id = :id");
-    $r = $stmt->execute([
-        ":user_id" => $user,
-        ":id" => $id
-        ]);
+    $stmt = $db->prepare("SELECT * FROM Survey Where Survey.user_id = :user_id");
+    $r = $stmt->execute([":user_id" => $user]);
     if ($r) {
         $results = $stmt->fetchALL(PDO::FETCH_ASSOC);
     }
     else{
         flash("There was a problem fetching the results");
     }
-//}
+}
 ?>
 
 <div class="results">

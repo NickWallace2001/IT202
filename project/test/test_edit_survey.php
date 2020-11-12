@@ -23,14 +23,14 @@ if(isset($_POST["save"])){
 			":title"=>$title,
 			":description"=>$description,
 			":visibility"=>$visibility,
-			":id"=>$id
+			":id"=>$id,
 		]);
 		if($r){
 			flash("Updated successfully with id: " . $id);
 		}
 		else{
 			$e = $stmt->errorInfo();
-			flash("Error updating: " . var_export($e, true));
+			flash("Error updating:". var_export($e, true));
 		}
 	}
 	else{
@@ -43,14 +43,19 @@ if(isset($_POST["save"])){
 $result = [];
 if(isset($id)){
 	$id = $_GET["id"];
+	$user = get_user_id();
 	$db = getDB();
-	$stmt = $db->prepare("SELECT * FROM Survey where id = :id");
-	$r = $stmt->execute([":id"=>$id]);
+	$stmt = $db->prepare("SELECT * FROM Survey where id = :id AND user_id = :user_id");
+	$r = $stmt->execute([
+	        ":id"=>$id,
+            ":user_id"=>$user
+    ]);
 	$result = $stmt->fetch(PDO::FETCH_ASSOC);
 }
 ?>
 
 <form method="POST">
+    <?php if ($result["user_id"] == get_user_id()): ?>
 	<label>Title</label>
 	<input name="title" placeholder="Title" value="<?php echo $result["title"];?>"/>
 	<label>Description</label>
@@ -61,6 +66,9 @@ if(isset($id)){
 		<option value="2" <?php echo ($result["visibility"] == "2"?'selected=selected"selected"':'');?>>Public</option>
 	</select>
         <input type="submit" name="save" value="Update"/>
+    <?php else: ?>
+        <p>You are not the owner of this survey</p>
+    <?php endif; ?>
 </form>
 
 <?php require(__DIR__ . "/../partials/flash.php");?>

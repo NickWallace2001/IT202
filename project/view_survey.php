@@ -18,10 +18,11 @@ if (isset($id)){
     }
 }
 ?>
+    <h2>View Survey</h2>
 <?php if (isset($result) && !empty($result)): ?>
     <div class="card">
         <div class="card-title">
-            <?php safer_echo($result["title"]); ?>
+            <h3><?php safer_echo($result["title"]); ?></h3>
         </div>
         <div class="card-body">
             <div>

@@ -7,19 +7,28 @@ if (!has_role("Admin")){
 }
 ?>
 
-<form method= "POST">
-	<label>Title</label>
-	<input name="title" placeholder="Title"/>
-	<label>Description</label>
-	<input name="description" placeholder="Description"/>
-	<label>Visibility<label/>
-	<select name="visibility">
-		<option value="0">Draft</option>
-		<option value="1">Private</option>
-		<option value="2">Public</option>
-	</select>
-	<input type="submit" name="save" value="Create"/>
-</form>
+<div class="container-fluid">
+    <h3>Create Survey</h3>
+    <form method= "POST">
+        <div class="form-group">
+            <label>Title</label>
+            <input class="form-control" name="title" placeholder="Title"/>
+        </div>
+        <div class="form-group">
+            <label>Description</label>
+            <input class="form-control" name="description" placeholder="Description"/>
+        </div>
+        <div class="form-group">
+            <label>Visibility</label>
+            <select class="form-control" name="visibility">
+                <option value="0">Draft</option>
+                <option value="1">Private</option>
+                <option value="2">Public</option>
+            </select>
+        </div>
+        <input class="btn btn-primary" type="submit" name="save" value="Create"/>
+    </form>
+</div>
 
 <?php
 if(isset($_POST["save"])){

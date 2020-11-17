@@ -5,15 +5,20 @@ if (!has_role("Admin")) {
 	die(header("Location: ../login.php"));
 }
 ?>
+<div class="container-fluid">
 	<h3>Create Question</h3>
 	<form method="POST">
-		<label>Question</label>
-		<input name="question" placeholder="Question"/>
-		<label>Survey ID</label>
-		<input type="number" name="survey_id" placeholder="Survey ID"/>
-		<input type="submit" name="save" value="Create"/>
+        <div class="form-group">
+		    <label>Question</label>
+		    <input class="form-control" name="question" placeholder="Question"/>
+        </div>
+        <div class="form-group">
+		    <label>Survey ID</label>
+		    <input class="form-control" type="number" name="survey_id" placeholder="Survey ID"/>
+        </div>
+		<input class="btn btn-primary" type="submit" name="save" value="Create"/>
 	</form>
-
+</div>
 <?php
 if (isset($_POST["save"])) {
 	$question = $_POST["question"];

@@ -54,21 +54,30 @@ if(isset($id)){
 }
 ?>
 
-<form method="POST">
-    <?php if ($result["user_id"] == get_user_id()): ?>
-	<label>Title</label>
-	<input name="title" placeholder="Title" value="<?php echo $result["title"];?>"/>
-	<label>Description</label>
-        <input name="description" placeholder="Description" value="<?php echo $result["description"];?>"/>
-	<select name="visibility" value="<?php echo $result["visibility"];?>">
-		<option value="0" <?php echo ($result["visibility"] == "0"?'selected=selected"selected"':'');?>>Draft</option>
-		<option value="1" <?php echo ($result["visibility"] == "1"?'selected=selected"selected"':'');?>>Private</option>
-		<option value="2" <?php echo ($result["visibility"] == "2"?'selected=selected"selected"':'');?>>Public</option>
-	</select>
-        <input type="submit" name="save" value="Update"/>
-    <?php else: ?>
-        <p>You are not the owner of this survey</p>
-    <?php endif; ?>
-</form>
+<div class="container-fluid">
+    <form method="POST">
+        <?php if ($result["user_id"] == get_user_id()): ?>
+            <div class="form-group">
+                <label>Title</label>
+                <input class="form-control" name="title" placeholder="Title" value="<?php echo $result["title"];?>"/>
+            </div>
+            <div class="form-group">
+                <label>Description</label>
+                <input class="form-control" name="description" placeholder="Description" value="<?php echo $result["description"];?>"/>
+            </div>
+            <div class="form-group">
+                <label>Visibility</label>
+                <select class="form-control" name="visibility" value="<?php echo $result["visibility"];?>">
+                    <option value="0" <?php echo ($result["visibility"] == "0"?'selected=selected"selected"':'');?>>Draft</option>
+                    <option value="1" <?php echo ($result["visibility"] == "1"?'selected=selected"selected"':'');?>>Private</option>
+                    <option value="2" <?php echo ($result["visibility"] == "2"?'selected=selected"selected"':'');?>>Public</option>
+                </select>
+            </div>
+            <input class="btn btn-primary" type="submit" name="save" value="Update"/>
+        <?php else: ?>
+            <p>You are not the owner of this survey</p>
+        <?php endif; ?>
+    </form>
+</div>
 
 <?php require(__DIR__ . "/../partials/flash.php");?>

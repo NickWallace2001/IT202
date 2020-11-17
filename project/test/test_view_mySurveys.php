@@ -19,29 +19,36 @@ else{
 }
 ?>
 
-<h3>Your Surveys</h3>
-<div class="results">
-    <?php if (count($results) > 0): ?>
-    <div class="list-group">
-        <?php foreach ($results as $r): ?>
-        <div class="list-group-item">
-            <div>
-                <div>Title: <?php safer_echo($r["title"]); ?></div>
-            </div>
-            <div>
-                <div>Description: <?php safer_echo($r["description"]); ?></div>
-            </div>
-            <div>
-                <div>Visibility: <?php getVisibility($r["visibility"]); ?></div>
-            </div>
-            <div>
-                <a type="button" href="test_edit_survey.php?id=<?php safer_echo($r['id']); ?>">Edit</a>
-                <a type="button" href="test_view_survey.php?id=<?php safer_echo($r['id']); ?>">View</a>
-            </div>
-            <br>
+<div class="container-fluid">
+    <h3>Your Surveys</h3>
+    <div class="results">
+        <?php if (count($results) > 0): ?>
+        <div class="list-group">
+            <?php foreach ($results as $r): ?>
+                <div class="list-group-item">
+                    <div class="row">
+                        <div class="col">
+                            <div>Title:</div>
+                            <div><?php safer_echo($r["title"]); ?></div>
+                        </div>
+                        <div class="col">
+                            <div>Description:</div>
+                            <div><?php safer_echo($r["description"]); ?></div>
+                        </div>
+                        <div class="col">
+                            <div>Visibility:</div>
+                            <div><?php getVisibility($r["visibility"]); ?></div>
+                        </div>
+                        <div class="col">
+                            <a class="btn btn-warning" type="button" href="edit_survey.php?id=<?php safer_echo($r['id']); ?>">Edit</a>
+                            <a class="btn btn-success" type="button" href="view_survey.php?id=<?php safer_echo($r['id']); ?>">View</a>
+                        </div>
+                    </div>
+                </div>
             <?php endforeach; ?>
+            <?php else: ?>
+                <p>No results</p>
+            <?php endif; ?>
         </div>
-        <?php else: ?>
-            <p>No results</p>
-        <?php endif; ?>
     </div>
+</div>

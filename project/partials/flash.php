@@ -6,9 +6,9 @@
     <?php $messages = getMessages(); ?>
     <?php if ($messages): ?>
         <?php foreach ($messages as $msg): ?>
-            <div class="row bg-secondary justify-content-center">
-                <p><?php echo $msg; ?></p>
-            </div>
+                <div class="row justify-content-center">
+                    <div class="alert alert-primary" role="alert"><?php echo $msg; ?></div>
+                </div>
         <?php endforeach; ?>
     <?php endif; ?>
 </div>

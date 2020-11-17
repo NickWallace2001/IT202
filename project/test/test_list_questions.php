@@ -24,36 +24,40 @@ if (isset($_POST["search"]) && !empty($query)) {
 	}
 }
 ?>
-<h3>List Questions</h3>
-<form method="POST">
-	<input name="query" placeholder="Search" value="<?php safer_echo($query); ?>"/>
-	<input type="submit" value="Search" name="search"/>
-</form>
-<div class="results">
-	<?php if (count($results) > 0): ?>
-		<div class="list-group">
-			<?php foreach ($results as $r): ?>
-				<div class="list-group-item">
-					<div>
-						<div>Question:</div>
-						<div><?php safer_echo($r["question"]); ?></div>
-					</div>
-					<div>
-						<div>Survey:</div>
-						<div><?php safer_echo($r["title"]); ?></div>
-					</div>
-					<div>
-						<div>Creater:</div>
-						<div><?php safer_echo($r["username"]); ?></div>
-					</div>
-					<div>
-						<a type="button" href="test_edit_question.php?id=<?php safer_echo($r['id']); ?>">Edit</a>
-						<a type="button" href="test_view_question.php?id=<?php safer_echo($r['id']); ?>">View</a>
-					</div>
-				</div>
-			<?php endforeach; ?>
-		</div>
-	<?php else: ?>
-		<p>No results</p>
-	<?php endif; ?>
+<div class="container-fluid">
+    <h3>List Questions</h3>
+    <form method="POST" class="form-inline">
+	    <input class="form-control" name="query" placeholder="Search" value="<?php safer_echo($query); ?>"/>
+	    <input class="btn btn-primary" type="submit" value="Search" name="search"/>
+    </form>
+    <div class="results">
+	    <?php if (count($results) > 0): ?>
+		    <div class="list-group">
+			    <?php foreach ($results as $r): ?>
+				    <div class="list-group-item">
+                        <div class="row">
+					        <div class="col">
+						        <div>Question:</div>
+						        <div><?php safer_echo($r["question"]); ?></div>
+					        </div>
+					        <div class="col">
+						        <div>Survey:</div>
+						        <div><?php safer_echo($r["title"]); ?></div>
+					        </div>
+					        <div class="col">
+						        <div>Creator:</div>
+						        <div><?php safer_echo($r["username"]); ?></div>
+					        </div>
+					        <div class="col">
+						        <a class="btn btn-warning" type="button" href="test_edit_question.php?id=<?php safer_echo($r['id']); ?>">Edit</a>
+						        <a class="btn btn-success" type="button" href="test_view_question.php?id=<?php safer_echo($r['id']); ?>">View</a>
+					        </div>
+                        </div>
+				    </div>
+			    <?php endforeach; ?>
+		    </div>
+	    <?php else: ?>
+		    <p>No results</p>
+	    <?php endif; ?>
+    </div>
 </div>

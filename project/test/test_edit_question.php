@@ -54,19 +54,25 @@ $stmt = $db->prepare("SELECT id,title from Survey LIMIT 10");
 $r = $stmt->execute();
 $surveys = $stmt->fetchAll(PDO::FETCH_ASSOC);
 ?>
+<div class="container-fluid">
 	<h3>Edit Question</h3>
 	<form method="POST">
-		<label>Question</label>
-		<input name="question" placeholder="Question" value="<?php echo $result["question"]; ?>"/>
-		<label>Survey</label>
-		<select name="survey_id" value="<?php echo $result["survey_id"];?>">
-			<option value="-1">None</option>
-			<?php foreach ($surveys as $survey): ?>
-				<option value="<?php safer_echo($survey["id"]); ?>" <?php echo ($result["survey_id"] == $survey["id"] ? 'selected="selected"' : '');?>
-				><?php safer_echo($survey["title"]); ?></option>
-			<?php endforeach; ?>
-		</select>
-		<input type="submit" name="save" value="Update"/>
+        <div class="form-group">
+		    <label>Question</label>
+		    <input class="form-control" name="question" placeholder="Question" value="<?php echo $result["question"]; ?>"/>
+        </div>
+        <div class="form-group">
+		    <label>Survey</label>
+		    <select class="form-control" name="survey_id" value="<?php echo $result["survey_id"];?>">
+			    <option value="-1">None</option>
+			    <?php foreach ($surveys as $survey): ?>
+				    <option value="<?php safer_echo($survey["id"]); ?>" <?php echo ($result["survey_id"] == $survey["id"] ? 'selected="selected"' : '');?>
+				    ><?php safer_echo($survey["title"]); ?></option>
+			    <?php endforeach; ?>
+		    </select>
+        </div>
+		<input class="btn btn-primary" type="submit" name="save" value="Update"/>
 	</form>
+</div>
 
 <?php require(__DIR__ . "/../partials/flash.php");

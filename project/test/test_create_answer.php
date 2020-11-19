@@ -8,16 +8,13 @@ if (!has_role("Admin")) {
 if(isset($_GET["id"])){
     $id = $_GET["id"];
 }
-if(isset($_GET["question"])){
-    $question = $_GET["question"];
-}
+
 if(isset($_GET["survey_id"])){
     $sid = $_GET["survey_id"];
 }
 ?>
 <div class="container-fluid">
     <h3>Create Answer</h3>
-    <p> <?php echo $question; ?></p>
     <form method="POST">
         <div class="form-group">
             <label>Answer</label>

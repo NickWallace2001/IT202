@@ -35,7 +35,7 @@ if (isset($_POST["save"])) {
 	if ($r) {
 		//flash("Created successfully with id: " . $db->lastInsertID());
         $qid = $db->lastInsertId();
-        die(header("Location: test_create_answer.php?id=$qid&survey_id=$id&question=$question"));
+        die(header("Location: test_create_answer.php?id=$qid&survey_id=$id"));
 	}
 	else{
 		$e = $stmt->errorInfo();

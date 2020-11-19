@@ -1,4 +1,4 @@
-<?php require_once(__DIR__ . "/partials/nav.php"); ?>
+<?php require_once(__DIR__ . "/../partials/nav.php"); ?>
 <?php
 $query = "";
 $results = [];
@@ -35,7 +35,7 @@ if (isset($_POST["search"]) && !empty($query)){
                                 <div><?php safer_echo($r["title"]); ?></div>
                             </div>
                             <div class="col">
-                                <a class="btn btn-success" type="button" href="view_survey.php?id=<?php safer_echo($r['id']); ?>">View</a>
+                                <a class="btn btn-success" type="button" href="test_view_survey.php?id=<?php safer_echo($r['id']); ?>">View</a>
                             </div>
                         </div>
                     </div>

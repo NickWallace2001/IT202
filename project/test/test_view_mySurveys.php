@@ -40,8 +40,8 @@ else{
                             <div><?php getVisibility($r["visibility"]); ?></div>
                         </div>
                         <div class="col">
-                            <a class="btn btn-warning" type="button" href="edit_survey.php?id=<?php safer_echo($r['id']); ?>">Edit</a>
-                            <a class="btn btn-success" type="button" href="view_survey.php?id=<?php safer_echo($r['id']); ?>">View</a>
+                            <a class="btn btn-warning" type="button" href="test_edit_survey.php?id=<?php safer_echo($r['id']); ?>">Edit</a>
+                            <a class="btn btn-success" type="button" href="test_view_survey.php?id=<?php safer_echo($r['id']); ?>">View</a>
                         </div>
                     </div>
                 </div>

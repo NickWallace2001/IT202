@@ -26,7 +26,7 @@ if (!has_role("Admin")){
                 <option value="2">Public</option>
             </select>
         </div>
-        <input class="btn btn-primary" type="submit" name="save" value="Create"/>
+        <input class="btn btn-primary" type="submit" name="save" value="Add Questions"/>
     </form>
 </div>
 
@@ -46,7 +46,9 @@ if(isset($_POST["save"])){
 ]);
 
 if($r){
-	flash("Created successfully wth id: " . $db->lastInsertID());
+	//flash("Created successfully wth id: " . $db->lastInsertID());
+    $sid = $db->lastInsertId();
+    die(header("Location:test_create_question.php?id=$sid"));
 }
 else{
 	$e = $stmt->errorInfo();

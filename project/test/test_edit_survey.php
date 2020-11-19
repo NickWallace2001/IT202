@@ -70,8 +70,6 @@ if(isset($id)) {
     if ($r) {
         $results = $stmt->fetchAll(PDO::FETCH_GROUP);
         if ($results) {
-            //echo "<pre>" . var_export($results, true) . "</pre>";
-            // echo "<br>";
             foreach ($results as $index => $group) {
                 foreach ($group as $details) {
                     if (empty($name)) {
@@ -84,7 +82,6 @@ if(isset($id)) {
                         $questions[$qid]["answers"] = [];
                     }
                     array_push($questions[$qid]["answers"], $answer);
-                    // echo "<br>" . $details["question"] . " " . $details["answer"] . "<br>";
                 }
             }
         } else {
@@ -93,6 +90,12 @@ if(isset($id)) {
         }
     }
 }
+
+if (isset($_POST["deleteq"])){
+    $itemID = $_POST["deleteq"];
+    echo $itemID;
+}
+
 ?>
 
 <div class="container-fluid">
@@ -124,6 +127,8 @@ if(isset($id)) {
                         <?php foreach ($questions as $index => $question): ?>
                             <div class="list-group-item">
                                 <div class="h5 justify-content-center text-center"><?php safer_echo($question["question"]); ?></div>
+                                <input type="hidden" name="deleteq" value="<?php safer_echo($question["QuestionId"]); ?>"/>
+                                <input class="btn btn-danger" type="submit" value="X"/>
                                 <div>
                                     <?php foreach ($question["answers"] as $answer): ?>
                                         <?php $eleId = $index . '-' . $answer["answerId"]; ?>

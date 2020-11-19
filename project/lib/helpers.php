@@ -93,4 +93,10 @@ function getURL($path){
     }
     return $_SERVER["CONTEXT_PREFIX"] . "/it202/repo/project/$path";
 }
+
+function deleteQuestion($question){
+    $db = getDB();
+    $db->prepare("DELETE FROM Questions WHERE id='$question'");
+    $db->execute();
+}
 ?>

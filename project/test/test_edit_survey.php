@@ -44,30 +44,54 @@ $result = [];
 $qa_result = [];
 //$answer_result = [];
 $i = 1;
-if(isset($id)){
-	$id = $_GET["id"];
-	$user = get_user_id();
-	$db = getDB();
-	$stmt = $db->prepare("SELECT * FROM Survey where id = :id AND user_id = :user_id");
-	$r = $stmt->execute([
-	        ":id"=>$id,
-            ":user_id"=>$user
+if(isset($id)) {
+    $id = $_GET["id"];
+    $user = get_user_id();
+    $db = getDB();
+    $stmt = $db->prepare("SELECT * FROM Survey where id = :id AND user_id = :user_id");
+    $r = $stmt->execute([
+        ":id" => $id,
+        ":user_id" => $user
     ]);
-	$result = $stmt->fetch(PDO::FETCH_ASSOC);
+    $result = $stmt->fetch(PDO::FETCH_ASSOC);
+    /*
+        //$stmt = $db->prepare("SELECT * FROM Questions where survey_id = :id");
+        $stmt = $db->prepare("SELECT Questions.id, question, survey_id, Answers.answer, Answers.question_id FROM Questions JOIN Answers on Questions.id = Answers.question_id where Questions.survey_id = :id");
+        $r = $stmt->execute([":id" => $id]);
+        $qa_result = $stmt->fetchAll(PDO::FETCH_GROUP);
 
-	$stmt = $db->prepare("SELECT * FROM Questions where survey_id = :id");
-    //$stmt = $db->prepare("SELECT id, question, survey_id, user_id, Answers.id, Answers.answer, Answers.question_id FROM Questions JOIN Answers on Questions.id = Answers.question_id where Questions.survey_id = :id");
-	$r = $stmt->execute([":id" => $id]);
-	$qa_result = $stmt->fetchAll(PDO::FETCH_ASSOC);
-/*
-    $stmt = $db->prepare("SELECT * FROM Answers where question_id = :qid");
-    foreach ($question_result as $qr){
-        $qid = $qr["id"];
-        $r = $stmt->execute([":qid" => $qid]);
+        echo var_export($qa_result, true);
+        echo var_export($stmt->errorInfo(), true);
+    */
+    $stmt = $db->prepare("SELECT q.id as GroupId, q.id as QuestionId, q.question, s.id as SurveyId, s.title as SurveyName, a.id as AnswerId, a.answer FROM Survey as s JOIN Questions as q on s.id = q.survey_id JOIN Answers as a on a.question_id = q.id WHERE s.id = :survey_id");
+    $r = $stmt->execute([":survey_id" => $id]);
+    $name = "";
+    $questions = [];
+    if ($r) {
+        $results = $stmt->fetchAll(PDO::FETCH_GROUP);
+        if ($results) {
+            //echo "<pre>" . var_export($results, true) . "</pre>";
+            // echo "<br>";
+            foreach ($results as $index => $group) {
+                foreach ($group as $details) {
+                    if (empty($name)) {
+                        $name = $details["SurveyName"];
+                    }
+                    $qid = $details["QuestionId"];
+                    $answer = ["answerId" => $details["AnswerId"], "answer" => $details["answer"]];
+                    if (!isset($questions[$qid]["answers"])) {
+                        $questions[$qid]["question"] = $details["question"];
+                        $questions[$qid]["answers"] = [];
+                    }
+                    array_push($questions[$qid]["answers"], $answer);
+                    // echo "<br>" . $details["question"] . " " . $details["answer"] . "<br>";
+                }
+            }
+        } else {
+            flash("Looks like you already took this survey", "warning");
+            die(header("Location: " . getURL("surveys.php")));
+        }
     }
-    $r = $stmt->execute([":qid" => $qid]);
-    $answer_result = $stmt->fetchAll(PDO::FETCH_ASSOC);
-*/
 }
 ?>
 
@@ -84,7 +108,7 @@ if(isset($id)){
             </div>
             <div class="form-group">
                 <label>Visibility</label>
-                <?php if (count($qa_result) > 0): ?>
+                <?php if (count($questions) > 0): ?>
                     <select class="form-control" name="visibility" value="<?php echo $result["visibility"];?>">
                         <option value="0" <?php echo ($result["visibility"] == "0"?'selected=selected"selected"':'');?>>Draft</option>
                         <option value="1" <?php echo ($result["visibility"] == "1"?'selected=selected"selected"':'');?>>Private</option>
@@ -95,16 +119,16 @@ if(isset($id)){
                 <?php endif; ?>
             </div>
             <div class="results">
-                <?php if (count($qa_result) > 0): ?>
+                <?php if (count($questions) > 0): ?>
                     <div class="list-group">
-                        <?php foreach ($qa_result as $qr): ?>
+                        <?php foreach ($questions as $index => $question): ?>
                             <div class="list-group-item">
-                                <div class="row">
-                                    <div class="col">
-                                        <div>Question <?php safer_echo($i); ?></div>
-                                        <?php $i++ ?>
-
-                                    </div>
+                                <div class="h5 justify-content-center text-center"><?php safer_echo($question["question"]); ?></div>
+                                <div>
+                                    <?php foreach ($question["answers"] as $answer): ?>
+                                        <?php $eleId = $index . '-' . $answer["answerId"]; ?>
+                                        <p class="text-center"><?php safer_echo($answer["answer"]); ?></p>
+                                    <?php endforeach; ?>
                                 </div>
                             </div>
                         <?php endforeach; ?>

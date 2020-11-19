@@ -26,7 +26,7 @@ if (isset($_POST["save"])) {
 	$question = $_POST["question"];
 	$user = get_user_id();
 	$db = getDB();
-	$stmt = $db->prepare("INSERT INTO Questions (question, survey_id user_id) VALUES(:question, :survey_id, :user)");
+	$stmt = $db->prepare("INSERT INTO Questions (question, survey_id, user_id) VALUES(:question, :survey_id, :user)");
 	$r = $stmt->execute([
 		":question" => $question,
 		":survey_id" => $id,

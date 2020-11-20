@@ -78,8 +78,7 @@ if(isset($id)) {
                 }
             }
         } else {
-            flash("Looks like you already took this survey", "warning");
-            die(header("Location: view_mySurveys.php"));
+            die(header("Location: edit_survey.php?id=$id"));
         }
     }
 }

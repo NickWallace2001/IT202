@@ -11,6 +11,10 @@ if (!has_role("Admin")) {
 if (isset($_GET["id"])) {
     $id = $_GET["id"];
 }
+
+if (isset($_GET["survey_id"])) {
+    $sid = $_GET["survey_id"];
+}
 ?>
 <?php
 //fetching
@@ -38,7 +42,7 @@ if (isset($id)) {
 				<div>Survey: <?php safer_echo($result["title"]); ?></div>
 				<div>Survey ID: <?php safer_echo($result["survey_id"]); ?></div>
 				<div>Created by: <?php safer_echo($result["username"]); ?></div>
-                <a class="btn btn-primary" type="button" href="test_list_questions.php?id=<?php echo($id); ?>">Go back to Search</a>
+                <a class="btn btn-primary" type="button" href="test_list_questions.php?id=<?php safer_echo($sid); ?>">Go back to Search</a>
 			</div>
 		</div>
 	</div>

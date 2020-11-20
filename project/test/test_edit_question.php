@@ -42,10 +42,6 @@ if (isset($_POST["save"])) {
 		flash("ID isn't set, we need an ID in order to update");
 	}
 }
-elseif (isset($_POST["deletea"])) {
-    $itemID = $_POST["deletea"];
-    deleteAnswer($itemID);
-}
 ?>
 <?php
 //fetching
@@ -106,7 +102,7 @@ $i=1;
                                 <p align="right">
                                     <input type="hidden" name="deletea" value="<?php echo($answer["id"]); ?>"/>
                                     <input class="btn btn-danger " type="submit" value="X"/>
-                                    <a class="btn btn-success" type="button" href="test_edit_answer.php?id=<?php safer_echo($answer["id"]); ?>">Edit Answer <?php echo $i++; ?></a>
+                                    <a class="btn btn-success" type="button" href="test_edit_answer.php?id=<?php safer_echo($answer["id"]); ?>&question_id=<?php safer_echo($result["id"]); ?>&survey_id=<?php safer_echo($sid); ?>">Edit Answer <?php echo $i++; ?></a>
                                 </p>
                             </div>
                         </form>
@@ -118,7 +114,8 @@ $i=1;
         <?php endif; ?>
     </div>
     <br>
-    <a class="btn btn-primary" type="button" href="test_create_answer.php?id=<?php echo($qid); ?>&survey_id=<?php safer_echo($sid); ?>">Add Answers</a>
+    <a class="btn btn-primary" type="button" href="test_create_answer.php?id=<?php safer_echo($id); ?>&survey_id=<?php safer_echo($sid); ?>">Add Answers</a>
+    <a class="btn btn-secondary" type="button" href="test_list_answers.php?id=<?php safer_echo($id); ?>&survey_id=<?php safer_echo($sid); ?>">Search Existing Answers</a>
 </div>
 
 <?php require(__DIR__ . "/../partials/flash.php");

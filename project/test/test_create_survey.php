@@ -22,8 +22,6 @@ if (!has_role("Admin")){
             <label>Visibility</label>
             <select class="form-control" name="visibility">
                 <option value="0">Draft</option>
-                <option value="1">Private</option>
-                <option value="2">Public</option>
             </select>
         </div>
         <input class="btn btn-primary" type="submit" name="save" value="Add Questions"/>

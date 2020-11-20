@@ -11,7 +11,7 @@ if(isset($_GET["id"])){
 ?>
 <div class="container-fluid">
 	<h3>Create Question</h3>
-    <h5>Must have at least 2 answers per question</h5>
+    <h5>Must have at least 1 question per survey</h5>
 	<form method="POST">
         <div class="form-group">
 		    <label>Question</label>

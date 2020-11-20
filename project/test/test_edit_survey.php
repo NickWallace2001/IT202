@@ -85,7 +85,7 @@ if(isset($id)) {
             }
         } else {
             flash("Looks like you already took this survey", "warning");
-            die(header("Location: " . getURL("surveys.php")));
+            die(header("Location: " . getURL("test/test_view_mySurveys.php")));
         }
     }
 }
@@ -152,6 +152,7 @@ if(isset($id)) {
     </div>
     <br>
     <a class="btn btn-primary" type="button" href="test_create_question.php?id=<?php echo($id); ?>">Add Questions</a>
+    <a class="btn btn-secondary" type="button" href="test_list_questions.php?id=<?php echo($id); ?>">Search Existing Questions</a>
 </div>
 
 <?php require(__DIR__ . "/../partials/flash.php");?>

@@ -18,10 +18,12 @@ if(isset($_GET["survey_id"])){
     <form method="POST">
         <div class="form-group">
             <label>Answer</label>
+            <h5>Must have at least 2 answers</h5>
             <input class="form-control" name="answer" placeholder="Answer"/>
         </div>
         <input class="btn btn-light" type="submit" name="save" value="Add Answer"/>
         <a class="btn btn-primary" type="button" href="test_create_question.php?id=<?php echo($sid); ?>">Add new question</a>
+        <a class="btn btn-success" type="button" href="test_edit_survey.php?id=<?php echo($sid); ?>">View Survey</a>
     </form>
 </div>
 

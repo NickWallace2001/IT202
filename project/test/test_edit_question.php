@@ -59,7 +59,7 @@ if (isset($id)) {
 	$qid = $result["id"];
 
 
-    $stmt = $db->prepare("SELECT id,title from Survey LIMIT 10");
+    $stmt = $db->prepare("SELECT id,title,user_id from Survey LIMIT 10");
     $r = $stmt->execute();
     $surveys = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
@@ -81,12 +81,14 @@ $i=1;
         </div>
         <div class="form-group">
 		    <label>Survey</label>
-            <h6>Notice: Changing this will remove this question from the listed survey; instead, create a new question with the same name</h6>
+            <h6>Notice: Changing this will remove this question from the listed survey; instead, create a new question with the same name. Click Update to go back</h6>
 		    <select class="form-control" name="survey_id" value="<?php echo $result["survey_id"];?>">
 			    <option value="-1">None</option>
 			    <?php foreach ($surveys as $survey): ?>
-				    <option value="<?php safer_echo($survey["id"]); ?>" <?php echo ($result["survey_id"] == $survey["id"] ? 'selected="selected"' : '');?>
-				    ><?php safer_echo($survey["title"]); ?></option>
+                    <?php if ($survey["user_id"] == $result["user_id"]): ?>
+				        <option value="<?php safer_echo($survey["id"]); ?>" <?php echo ($result["survey_id"] == $survey["id"] ? 'selected="selected"' : '');?>
+				        ><?php safer_echo($survey["title"]); ?></option>
+                    <?php endif; ?>
 			    <?php endforeach; ?>
 		    </select>
         </div>

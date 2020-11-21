@@ -12,6 +12,7 @@ if ($r) {
 else{
     flash("There was a problem fetching the results");
 }
+
 ?>
 
 <div class="container-fluid">

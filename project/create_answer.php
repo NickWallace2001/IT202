@@ -9,19 +9,6 @@ if(isset($_GET["survey_id"])){
     $sid = $_GET["survey_id"];
 }
 ?>
-    <div class="container-fluid">
-        <h3>Create Answer</h3>
-        <form method="POST">
-            <div class="form-group">
-                <label>Answer</label>
-                <h5>Must have at least 2 answers</h5>
-                <input class="form-control" name="answer" placeholder="Answer"/>
-            </div>
-            <input class="btn btn-secondary" type="submit" name="save" value="Add Answer"/>
-            <a class="btn btn-primary" type="button" href="create_question.php?id=<?php echo($sid); ?>">Add new question</a>
-            <a class="btn btn-success" type="button" href="edit_survey.php?id=<?php echo($sid); ?>">View Survey</a>
-        </form>
-    </div>
 
 <?php
 if (isset($_POST["save"])) {
@@ -43,4 +30,35 @@ if (isset($_POST["save"])) {
     }
 }
 ?>
+<?php
+$results = [];
+if (isset($id)){
+    $db = getDB();
+    $stmt = $db->prepare("SELECT * FROM Answers where question_id=:qid");
+    $r = $stmt->execute([":qid" => $id]);
+    if($r) {
+        $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+    else{
+        $e = $stmt->errorInfo();
+    }
+}
+?>
+    <div class="container-fluid">
+        <h3>Create Answer</h3>
+        <form method="POST">
+            <div class="form-group">
+                <h5>Must have at least 2 answers</h5>
+                <label>Answer</label>
+                <input class="form-control" name="answer" placeholder="Answer"/>
+            </div>
+            <input class="btn btn-secondary" type="submit" name="save" value="Add Answer"/>
+            <?php if (count($results) > 1): ?>
+                <a class="btn btn-primary" type="button" href="create_question.php?id=<?php echo($sid); ?>">Add new question</a>
+                <a class="btn btn-success" type="button" href="edit_survey.php?id=<?php echo($sid); ?>">View Survey</a>
+            <?php else: ?>
+                <p>Please add answers</p>
+            <?php endif; ?>
+        </form>
+    </div>
 <?php require(__DIR__ . "/partials/flash.php");

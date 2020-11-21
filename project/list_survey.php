@@ -5,9 +5,22 @@ $results = [];
 if (isset($_POST["query"])){
     $query = $_POST["query"];
 }
+?>
+<?php
 if (isset($_POST["search"]) && !empty($query)){
     $db = getDB();
     $stmt = $db->prepare("SELECT * FROM Survey Where visibility = 2 AND (title like :q) LIMIT 10");
+    $r = $stmt->execute([":q" => "%$query%"]);
+    if ($r) {
+        $results = $stmt->fetchALL(PDO::FETCH_ASSOC);
+    }
+    else{
+        flash("There was a problem fetching the results");
+    }
+}
+else{
+    $db = getDB();
+    $stmt = $db->prepare("SELECT * FROM Survey Where visibility = 2 LIMIT 10");
     $r = $stmt->execute([":q" => "%$query%"]);
     if ($r) {
         $results = $stmt->fetchALL(PDO::FETCH_ASSOC);

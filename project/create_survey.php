@@ -1,4 +1,5 @@
 <?php require_once(__DIR__. "/partials/nav.php");?>
+
 <div class="container-fluid">
     <h3>Create Survey</h3>
     <form method= "POST">
@@ -12,15 +13,14 @@
         </div>
         <div class="form-group">
             <label>Visibility</label>
-                <select class="form-control" name="visibility">
-                    <option value="0">Draft</option>
-                    <option value="1">Private</option>
-                    <option value="2">Public</option>
-                </select>
+            <select class="form-control" name="visibility">
+                <option value="0">Draft</option>
+            </select>
         </div>
-        <input class="btn btn-primary" type="submit" name="save" value="Create"/>
+        <input class="btn btn-primary" type="submit" name="save" value="Add Questions"/>
     </form>
 </div>
+
 <?php
 if(isset($_POST["save"])){
     $title = $_POST["title"];
@@ -37,7 +37,9 @@ if(isset($_POST["save"])){
     ]);
 
     if($r){
-        flash("Created successfully wth id: " . $db->lastInsertID());
+        //flash("Created successfully wth id: " . $db->lastInsertID());
+        $sid = $db->lastInsertId();
+        die(header("Location:create_question.php?id=$sid"));
     }
     else{
         $e = $stmt->errorInfo();

@@ -36,22 +36,60 @@ if(isset($_POST["save"])){
 	else{
 		flash("ID isn't set, we need an ID in order to update");
 	}
+
+
+}
+elseif (isset($_POST["deleteq"])) {
+    $itemID = $_POST["deleteq"];
+    deleteQuestion($itemID);
 }
 ?>
 <?php
 //fetching
 $result = [];
-if(isset($id)){
-	$id = $_GET["id"];
-	$user = get_user_id();
-	$db = getDB();
-	$stmt = $db->prepare("SELECT * FROM Survey where id = :id AND user_id = :user_id");
-	$r = $stmt->execute([
-	        ":id"=>$id,
-            ":user_id"=>$user
+$qa_result = [];
+$i = 1;
+if(isset($id)) {
+    $id = $_GET["id"];
+    $user = get_user_id();
+    $db = getDB();
+    $stmt = $db->prepare("SELECT * FROM Survey where id = :id AND user_id = :user_id");
+    $r = $stmt->execute([
+        ":id" => $id,
+        ":user_id" => $user
     ]);
-	$result = $stmt->fetch(PDO::FETCH_ASSOC);
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    $stmt = $db->prepare("SELECT q.id as GroupId, q.id as QuestionId, q.question, s.id as SurveyId, s.title as SurveyName, a.id as AnswerId, a.answer FROM Survey as s JOIN Questions as q on s.id = q.survey_id JOIN Answers as a on a.question_id = q.id WHERE s.id = :survey_id");
+    $r = $stmt->execute([":survey_id" => $id]);
+    $name = "";
+    $questions = [];
+    if ($r) {
+        $results = $stmt->fetchAll(PDO::FETCH_GROUP);
+
+
+        if ($results) {
+            foreach ($results as $index => $group) {
+                foreach ($group as $details) {
+                    if (empty($name)) {
+                        $name = $details["SurveyName"];
+                    }
+                    $qid = $details["QuestionId"];
+                    $answer = ["answerId" => $details["AnswerId"], "answer" => $details["answer"]];
+                    if (!isset($questions[$qid]["answers"])) {
+                        $questions[$qid]["question"] = $details["question"];
+                        $questions[$qid]["answers"] = [];
+                    }
+                    array_push($questions[$qid]["answers"], $answer);
+                }
+            }
+        } else {
+            flash("Looks like you already took this survey", "warning");
+            die(header("Location: " . getURL("test/test_view_mySurveys.php")));
+        }
+    }
 }
+
 ?>
 
 <div class="container-fluid">
@@ -67,17 +105,54 @@ if(isset($id)){
             </div>
             <div class="form-group">
                 <label>Visibility</label>
-                <select class="form-control" name="visibility" value="<?php echo $result["visibility"];?>">
-                    <option value="0" <?php echo ($result["visibility"] == "0"?'selected=selected"selected"':'');?>>Draft</option>
-                    <option value="1" <?php echo ($result["visibility"] == "1"?'selected=selected"selected"':'');?>>Private</option>
-                    <option value="2" <?php echo ($result["visibility"] == "2"?'selected=selected"selected"':'');?>>Public</option>
-                </select>
+                <?php if (count($questions) > 0): ?>
+                    <select class="form-control" name="visibility" value="<?php echo $result["visibility"];?>">
+                        <option value="0" <?php echo ($result["visibility"] == "0"?'selected=selected"selected"':'');?>>Draft</option>
+                        <option value="1" <?php echo ($result["visibility"] == "1"?'selected=selected"selected"':'');?>>Private</option>
+                        <option value="2" <?php echo ($result["visibility"] == "2"?'selected=selected"selected"':'');?>>Public</option>
+                    </select>
+                <?php else: ?>
+                    <p>Draft</p>
+                <?php endif; ?>
             </div>
-            <input class="btn btn-primary" type="submit" name="save" value="Update"/>
         <?php else: ?>
             <p>You are not the owner of this survey</p>
         <?php endif; ?>
+        <input class="btn btn-primary" type="submit" name="save" value="Update"/>
     </form>
+
+    <div class="results">
+        <?php if (count($questions) > 0): ?>
+            <div class="list-group">
+                <?php foreach ($questions as $index => $question): ?>
+                    <div class="list-group-item">
+                        <div class="h2"><?php echo "Question " . $i; ?></div>
+                        <div class="h5 justify-content-center text-center"><?php safer_echo($question["question"]); ?></div>
+                        <form method="POST">
+                            <div>
+                                <p align="right">
+                                    <input type="hidden" name="deleteq" value="<?php echo($index); ?>"/>
+                                    <input class="btn btn-danger " type="submit" value="X"/>
+                                    <a class="btn btn-success" type="button" href="test_edit_question.php?id=<?php safer_echo($index); ?>&survey_id=<?php safer_echo($id); ?>">Edit Question <?php echo $i++; ?></a>
+                                </p>
+                            </div>
+                        </form>
+                        <div>
+                            <?php foreach ($question["answers"] as $answer): ?>
+                                <?php $eleId = $index . '-' . $answer["answerId"]; ?>
+                                <p class="text-center"><?php safer_echo($answer["answer"]); ?></p>
+                            <?php endforeach; ?>
+                        </div>
+                    </div>
+                <?php endforeach; ?>
+            </div>
+        <?php else: ?>
+            <p>Please add questions</p>
+        <?php endif; ?>
+    </div>
+    <br>
+    <a class="btn btn-primary" type="button" href="test_create_question.php?id=<?php echo($id); ?>">Add Questions</a>
+    <a class="btn btn-secondary" type="button" href="test_list_questions.php?id=<?php echo($id); ?>">Search Existing Questions</a>
 </div>
 
 <?php require(__DIR__ . "/../partials/flash.php");?>

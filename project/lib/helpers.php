@@ -93,4 +93,30 @@ function getURL($path){
     }
     return $_SERVER["CONTEXT_PREFIX"] . "/it202/repo/project/$path";
 }
+
+function deleteQuestion($question){
+    $db = getDB();
+    $stmt = $db->prepare("DELETE FROM Questions WHERE id='$question'");
+    $r = $stmt->execute();
+    if($r){
+        flash("Question successfully deleted");
+    }
+    else{
+        $e = $stmt->errorInfo();
+        flash("Error updating:". var_export($e, true));
+    }
+}
+
+function deleteAnswer($answer){
+    $db = getDB();
+    $stmt = $db->prepare("DELETE FROM Answers WHERE id='$answer'");
+    $r = $stmt->execute();
+    if($r){
+        flash("Answer successfully deleted");
+    }
+    else{
+        $e = $stmt->errorInfo();
+        flash("Error updating:". var_export($e, true));
+    }
+}
 ?>

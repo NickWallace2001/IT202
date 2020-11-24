@@ -35,6 +35,11 @@ if (isset($_POST["save"])) {
         flash("ID isn't set, we need an ID in order to update");
     }
 }
+elseif (isset($_POST["deletea"])) {
+    $itemID = $_POST["deletea"];
+    deleteAnswer($itemID);
+}
+?>
 ?>
 <?php
 //fetching

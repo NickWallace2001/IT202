@@ -77,8 +77,6 @@ if(isset($id)) {
                     array_push($questions[$qid]["answers"], $answer);
                 }
             }
-        } else {
-            die(header("Location: edit_survey.php?id=$id"));
         }
     }
 }

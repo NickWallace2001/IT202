@@ -17,15 +17,14 @@ if (isset($_POST["save"])) {
     $user = get_user_id();
     $db = getDB();
     if (isset($id)) {
-        $stmt = $db->prepare("UPDATE Questions set question=:question, survey_id=:survey where id=:id");
+        $stmt = $db->prepare("UPDATE Questions set question=:question where id=:id");
         $r = $stmt->execute([
             ":question" => $question,
-            ":survey" => $survey,
             ":id" => $id
         ]);
         if ($r) {
             //flash("Updated successfully with id: " . $id);
-            die(header("Location: edit_survey.php?id=$survey"));
+            die(header("Location: edit_survey.php?id=$sid"));
         }
         else{
             $e = $stmt->errorInfo();
@@ -69,19 +68,6 @@ $i=1;
                 <label>Question</label>
                 <input class="form-control" name="question" placeholder="Question" value="<?php echo $result["question"]; ?>"/>
             </div>
-            <div class="form-group">
-                <label>Survey</label>
-                <h6>Notice: Changing this will remove this question from the listed survey; instead, create a new question with the same name. Click Update to go back</h6>
-                <select class="form-control" name="survey_id" value="<?php echo $result["survey_id"];?>">
-                    <option value="-1">None</option>
-                    <?php foreach ($surveys as $survey): ?>
-                        <?php if ($survey["user_id"] == $result["user_id"]): ?>
-                            <option value="<?php safer_echo($survey["id"]); ?>" <?php echo ($result["survey_id"] == $survey["id"] ? 'selected="selected"' : '');?>
-                            ><?php safer_echo($survey["title"]); ?></option>
-                        <?php endif; ?>
-                    <?php endforeach; ?>
-                </select>
-            </div>
             <input class="btn btn-primary" type="submit" name="save" value="Update"/>
         </form>
         <div class="results">
@@ -109,7 +95,6 @@ $i=1;
         </div>
         <br>
         <a class="btn btn-primary" type="button" href="create_answer.php?id=<?php safer_echo($id); ?>&survey_id=<?php safer_echo($sid); ?>">Add Answers</a>
-        <a class="btn btn-secondary" type="button" href="list_answers.php?id=<?php safer_echo($id); ?>&survey_id=<?php safer_echo($sid); ?>">Search Existing Answers</a>
     </div>
 
 <?php require(__DIR__ . "/partials/flash.php");

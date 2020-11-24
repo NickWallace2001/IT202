@@ -17,15 +17,14 @@ if (isset($_POST["save"])) {
     $user = get_user_id();
     $db = getDB();
     if (isset($id)) {
-        $stmt = $db->prepare("UPDATE Answers set answer=:answer, question_id=:question where id=:id");
+        $stmt = $db->prepare("UPDATE Answers set answer=:answer where id=:id");
         $r = $stmt->execute([
-            ":question" => $question,
             ":answer" => $answer,
             ":id" => $id
         ]);
         if ($r) {
             //flash("Updated successfully with id: " . $id);
-            die(header("Location: edit_question.php?id=$question&survey_id=$sid"));
+            die(header("Location: edit_question.php?id=$qid&survey_id=$sid"));
         }
         else{
             $e = $stmt->errorInfo();
@@ -68,19 +67,6 @@ $i=1;
             <div class="form-group">
                 <label>Answer</label>
                 <input class="form-control" name="answer" placeholder="Answer" value="<?php echo $result["answer"]; ?>"/>
-            </div>
-            <div class="form-group">
-                <label>Survey</label>
-                <h6>Notice: Changing this will remove this answer from the listed question; instead, create a new answer with the same name. Click Update to go back</h6>
-                <select class="form-control" name="question_id" value="<?php echo $result["question_id"];?>">
-                    <option value="-1">None</option>
-                    <?php foreach ($questions as $question): ?>
-                        <?php if ($question["user_id"] == $result["user_id"]): ?>
-                            <option value="<?php safer_echo($question["id"]); ?>" <?php echo ($result["question_id"] == $question["id"] ? 'selected="selected"' : '');?>
-                            ><?php safer_echo($question["question"]); ?></option>
-                        <?php endif; ?>
-                    <?php endforeach; ?>
-                </select>
             </div>
             <input class="btn btn-primary" type="submit" name="save" value="Update"/>
         </form>

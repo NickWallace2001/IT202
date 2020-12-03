@@ -18,7 +18,6 @@ if(isset($id)) {
     if ($r) {
         $results = $stmt->fetchAll(PDO::FETCH_GROUP);
 
-
         if ($results) {
             foreach ($results as $index => $group) {
                 foreach ($group as $details) {
@@ -41,7 +40,7 @@ if(isset($id)) {
         }
     }
 
-    $stmt = $db->prepare("SELECT question_id as GroupId, question_id as QuestionId, survey_id, answer_id as AnswerId FROM Responses where survey_id = :sid");
+    $stmt = $db->prepare("SELECT question_id as GroupId, question_id as QuestionId, survey_id as SurveyId, answer_id as AnswerId FROM Responses where survey_id = :sid");
     $r = $stmt->execute([":sid" => $id]);
     $responses = [];
     if ($r){
@@ -52,6 +51,7 @@ if(isset($id)) {
                 foreach ($group as $details){
                     $qid = $details["QuestionId"];
                     $answer = intval($details["AnswerId"]);
+                    $sid = intval($details["SurveyId"]);
 
                     if (!isset($responses[$qid])){
                         $responses[$qid] = [];
@@ -62,6 +62,9 @@ if(isset($id)) {
         }
     }
 }
+
+
+
 
 $math = [];
 
@@ -88,6 +91,7 @@ foreach ($questions as $index => $question){
     }
 }
 
+//echo "<pre>" . var_export($results, true) . "</pre>";
 //echo "<pre>" . var_export($questions, true) . "</pre>";
 //echo "<pre>" . var_export($responses, true) . "</pre>";
 //echo "<pre>" . var_export($math, true) . "</pre>";

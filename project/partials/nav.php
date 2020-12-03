@@ -37,6 +37,7 @@ require_once(__DIR__ . "/../lib/helpers.php");
                         <a class="nav-link text-dark" href="<?php echo getURL("test/test_create_question.php"); ?>">Create Question</a>
                         <a class="nav-link text-dark" href="<?php echo getURL("test/test_list_questions.php"); ?>">View Questions</a>
                         <a class="nav-link text-dark" href="<?php echo getURL("test/test_view_mySurveys.php"); ?>">My Surveys</a>
+                        <a class="nav-link text-dark" href="<?php echo getURL("taken_surveys.php"); ?>">Taken Surveys</a>
                     </div>
                 </li>
             <?php endif; ?>

@@ -31,6 +31,14 @@ else{
     }
 }
 
+$stmt = $db->prepare("SELECT Survey.title, Survey.id, count(Responses.survey_id) as total FROM Survey LEFT JOIN (SELECT distinct user_id, survey_id FROM Responses) as Responses on Survey.id = Responses.survey_id GROUP BY title");
+$r = $stmt->execute();
+if ($r){
+    $taken = $stmt->fetchAll(PDO::FETCH_ASSOC);
+}
+else{
+    flash("There was a problem fetching the results");
+}
 ?>
 <div class="container-fluid">
     <h3>List Surveys</h3>
@@ -44,15 +52,25 @@ else{
         <div class="list-group">
             <?php foreach ($results as $r): ?>
             <div class="list-group-item">
-                <div class="row">
-                    <div class="col">
-                        <div>Title:</div>
-                        <div><?php safer_echo($r["title"]); ?></div>
-                    </div>
-                    <div class="col">
-                        <a class="btn btn-success" type="button" href="take_survey.php?id=<?php safer_echo($r['id']); ?>">Take Survey</a> <a class="btn btn-primary" type="button" href="results.php?id=<?php safer_echo($r['id']); ?>">View Results</a>
-                    </div>
-                </div>
+                <?php foreach($taken as $ind): ?>
+                    <?php if ($ind["title"] == $r["title"]): ?>
+                        <div class="row">
+                            <div class="col">
+                                <div>Title:</div>
+                                <div><?php safer_echo($r["title"]); ?></div>
+                            </div>
+                            <div class="col">
+                                <a class="btn btn-success" type="button" href="take_survey.php?id=<?php safer_echo($r['id']); ?>">Take Survey</a>
+                                <?php if (intval($ind["total"]) > 0): ?>
+                                    <a class="btn btn-primary" type="button" href="results.php?id=<?php safer_echo($r['id']); ?>">View Results</a>
+                                <?php endif; ?>
+                            </div>
+                            <div class="col">
+                                <div>Times Taken:</div> <div><?php safer_echo($ind["total"]); ?></div>
+                            </div>
+                        </div>
+                    <?php endif; ?>
+                <?php endforeach; ?>
             </div>
             <?php endforeach; ?>
         </div>

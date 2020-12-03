@@ -45,6 +45,7 @@ require_once(__DIR__ . "/../lib/helpers.php");
                 <li class="nav-item"><a class="nav-link" href="<?php echo getURL("create_survey.php"); ?>">Create Survey</a></li>
                 <li class="nav-item"><a class="nav-link" href="<?php echo getURL("list_survey.php"); ?>">View Surveys</a></li>
                 <li class="nav-item"><a class="nav-link" href="<?php echo getURL("view_mySurveys.php"); ?>">My Surveys</a></li>
+                <li class="nav-item"><a class="nav-link" href="<?php echo getURL("taken_surveys.php"); ?>">Surveys Taken</a></li>
                 <li class="nav-item"><a class="nav-link" href="<?php echo getURL("profile.php"); ?>">Profile</a></li>
                 <li class="nav-item"><a class="nav-link" href="<?php echo getURL("logout.php"); ?>">Logout</a></li>
             <?php endif; ?>

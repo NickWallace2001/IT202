@@ -7,6 +7,7 @@ if (isset($_POST["query"])){
 }
 ?>
 <?php
+
 if (isset($_POST["search"]) && !empty($query)){
     $db = getDB();
     $stmt = $db->prepare("SELECT * FROM Survey Where visibility = 2 AND (title like :q) LIMIT 10");
@@ -29,6 +30,7 @@ else{
         flash("There was a problem fetching the results");
     }
 }
+
 ?>
 <div class="container-fluid">
     <h3>List Surveys</h3>
@@ -48,7 +50,7 @@ else{
                         <div><?php safer_echo($r["title"]); ?></div>
                     </div>
                     <div class="col">
-                        <a class="btn btn-success" type="button" href="view_survey.php?id=<?php safer_echo($r['id']); ?>">View</a>
+                        <a class="btn btn-success" type="button" href="take_survey.php?id=<?php safer_echo($r['id']); ?>">Take Survey</a> <a class="btn btn-primary" type="button" href="results.php?id=<?php safer_echo($r['id']); ?>">View Results</a>
                     </div>
                 </div>
             </div>
@@ -59,3 +61,4 @@ else{
         <?php endif; ?>
     </div>
 </div>
+<?php require(__DIR__ . "/partials/flash.php"); ?>

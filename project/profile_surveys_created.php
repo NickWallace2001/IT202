@@ -1,18 +1,38 @@
 <?php require_once(__DIR__ . "/partials/nav.php"); ?>
 <?php
-if (isset($_GET["id"])){
-    $id = $_GET["id"];
+if (isset($_GET["pid"])){
+    $pid = $_GET["pid"];
+    $_SESSION["pid"] = $pid;
 }
-if (isset($_GET["username"])){
-    $username = $_GET["username"];
+elseif (isset($_SESSION["pid"])){
+    $pid = $_SESSION["pid"];
+}
+if (isset($_GET["pusername"])){
+    $pusername = $_GET["pusername"];
+    $_SESSION["pusername"] = $pusername;
+}
+elseif (isset($_SESSION["pusername"])){
+    $pusername = $_SESSION["pusername"];
 }
 ?>
 <?php
 $results = [];
+$per_page = 10;
 
 $db = getDB();
-$stmt = $db->prepare("SELECT * FROM Survey Where Survey.user_id = :user_id AND visibility = 2 LIMIT 10");
-$r = $stmt->execute([":user_id" => $id]);
+$query = "SELECT count(*) as total FROM Survey Where Survey.user_id = :user_id";
+$params = [":user_id" => $pid];
+paginate($query, $params, $per_page);
+
+$stmt = $db->prepare("SELECT * FROM Survey Where Survey.user_id = :user_id AND visibility = 2 LIMIT :offset, :count");
+$stmt->bindValue(":offset", $offset, PDO::PARAM_INT);
+$stmt->bindValue(":count", $per_page, PDO::PARAM_INT);
+$stmt->bindValue(":user_id", $pid);
+$r = $stmt->execute();
+$e = $stmt->errorInfo();
+if($e[0] != "00000"){
+    flash(var_export($e, true), "alert");
+}
 if ($r) {
     $results = $stmt->fetchALL(PDO::FETCH_ASSOC);
 }
@@ -31,7 +51,7 @@ else{
 ?>
 
 <div class="container-fluid">
-    <h3><?php echo $username . "'s " ?>Surveys</h3>
+    <h3><?php echo $pusername . "'s " ?>Surveys</h3>
     <div class="results">
         <?php if (count($results) > 0): ?>
         <div class="list-group">
@@ -72,5 +92,6 @@ else{
             <?php endif; ?>
         </div>
     </div>
+    <?php include(__DIR__."/partials/pagination.php");?>
 </div>
 <?php require_once(__DIR__ . "/partials/flash.php");

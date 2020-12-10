@@ -36,8 +36,8 @@ if (isset($id)){
                         <div>Profile Visibility: <?php getVisibility($result["visibility"]); ?></div>
                         <div>Created on: <?php safer_echo($result["created"]); ?></div>
                         <div>
-                            <a class="btn btn-primary" type="button" href="profile_surveys_created.php?id=<?php echo($id); ?>&username=<?php echo $result["username"]; ?>">Surveys Created</a>
-                            <a class="btn btn-success" type="button" href="profile_surveys_taken.php?id=<?php echo($id); ?>&username=<?php echo $result["username"]; ?>">Surveys Taken</a>
+                            <a class="btn btn-primary" type="button" href="profile_surveys_created.php?pid=<?php echo($id); ?>&pusername=<?php echo $result["username"]; ?>">Surveys Created</a>
+                            <a class="btn btn-success" type="button" href="profile_surveys_taken.php?pid=<?php echo($id); ?>&pusername=<?php echo $result["username"]; ?>">Surveys Taken</a>
                         </div>
                     </div>
                 </div>

@@ -4,25 +4,51 @@ $query = "";
 $results = [];
 if (isset($_POST["query"])){
     $query = $_POST["query"];
+    $_SESSION["query"] = $query;
+}
+elseif (isset($_SESSION["query"])){
+    $query =  $_SESSION["query"];
 }
 ?>
 <?php
-
-if (isset($_POST["search"]) && !empty($query) && has_role("Admin")){
-$db = getDB();
-$stmt = $db->prepare("SELECT * FROM Survey Where (title like :q) LIMIT 10");
-$r = $stmt->execute([":q" => "%$query%"]);
-if ($r) {
-    $results = $stmt->fetchALL(PDO::FETCH_ASSOC);
-}
-else{
-    flash("There was a problem fetching the results");
-}
-}
-elseif (isset($_POST["search"]) && !empty($query)){
+$per_page = 10;
+if (!empty($query) && has_role("Admin")){
     $db = getDB();
-    $stmt = $db->prepare("SELECT * FROM Survey Where visibility = 2 AND (title like :q) LIMIT 10");
-    $r = $stmt->execute([":q" => "%$query%"]);
+    $q = "SELECT count(*) as total FROM Survey Where (title like :q)";
+    $params = [":q" => "%$query%"];
+    paginate($q, $params, $per_page);
+
+    $stmt = $db->prepare("SELECT * FROM Survey Where (title like :q) LIMIT :offset, :count");
+    $stmt->bindValue(":offset", $offset, PDO::PARAM_INT);
+    $stmt->bindValue(":count", $per_page, PDO::PARAM_INT);
+    $stmt->bindValue(":q", "%$query%");
+    $r = $stmt->execute();
+    $e = $stmt->errorInfo();
+    if($e[0] != "00000"){
+        flash(var_export($e, true), "alert");
+    }
+    if ($r) {
+        $results = $stmt->fetchALL(PDO::FETCH_ASSOC);
+    }
+    else{
+        flash("There was a problem fetching the results");
+    }
+}
+elseif (!empty($query)){
+    $db = getDB();
+    $q = "SELECT count(*) as total FROM Survey Where visibility = 2 AND (title like :q)";
+    $params = [":q" => "%$query%"];
+    paginate($q, $params, $per_page);
+
+    $stmt = $db->prepare("SELECT * FROM Survey Where visibility = 2 AND (title like :q) LIMIT :offset, :count");
+    $stmt->bindValue(":offset", $offset, PDO::PARAM_INT);
+    $stmt->bindValue(":count", $per_page, PDO::PARAM_INT);
+    $stmt->bindValue(":q", "%$query%");
+    $r = $stmt->execute();
+    $e = $stmt->errorInfo();
+    if($e[0] != "00000"){
+        flash(var_export($e, true), "alert");
+    }
     if ($r) {
         $results = $stmt->fetchALL(PDO::FETCH_ASSOC);
     }
@@ -32,8 +58,18 @@ elseif (isset($_POST["search"]) && !empty($query)){
 }
 elseif (has_role("Admin")){
     $db = getDB();
-    $stmt = $db->prepare("SELECT * FROM Survey LIMIT 10");
-    $r = $stmt->execute([":q" => "%$query%"]);
+    $q = "SELECT count(*) as total FROM Survey";
+    $params = [];
+    paginate($q, $params, $per_page);
+
+    $stmt = $db->prepare("SELECT * FROM Survey LIMIT :offset, :count");
+    $stmt->bindValue(":offset", $offset, PDO::PARAM_INT);
+    $stmt->bindValue(":count", $per_page, PDO::PARAM_INT);
+    $r = $stmt->execute();
+    $e = $stmt->errorInfo();
+    if($e[0] != "00000"){
+        flash(var_export($e, true), "alert");
+    }
     if ($r) {
         $results = $stmt->fetchALL(PDO::FETCH_ASSOC);
     }
@@ -43,8 +79,18 @@ elseif (has_role("Admin")){
 }
 else{
     $db = getDB();
-    $stmt = $db->prepare("SELECT * FROM Survey Where visibility = 2 LIMIT 10");
+    $q = "SELECT count(*) as total FROM Survey where visibility = 2";
+    $params = [];
+    paginate($q, $params, $per_page);
+
+    $stmt = $db->prepare("SELECT * FROM Survey Where visibility = 2 LIMIT :offset, :count");
+    $stmt->bindValue(":offset", $offset, PDO::PARAM_INT);
+    $stmt->bindValue(":count", $per_page, PDO::PARAM_INT);
     $r = $stmt->execute();
+    $e = $stmt->errorInfo();
+    if($e[0] != "00000"){
+        flash(var_export($e, true), "alert");
+    }
     if ($r) {
         $results = $stmt->fetchALL(PDO::FETCH_ASSOC);
     }
@@ -114,5 +160,6 @@ else{
             <p>No results</p>
         <?php endif; ?>
     </div>
+    <?php include(__DIR__."/partials/pagination.php");?>
 </div>
 <?php require(__DIR__ . "/partials/flash.php"); ?>

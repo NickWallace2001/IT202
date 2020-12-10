@@ -1,21 +1,25 @@
 <?php require_once(__DIR__ . "/partials/nav.php"); ?>
 <?php
-$results = [];
-
+$per_page = 10;
 $db = getDB();
-$user = get_user_id();
-$stmt = $db->prepare("SELECT * From Survey");
-$r = $stmt->execute([":user_id" => $user]);
-if ($r){
-    $results = $stmt->fetchALL(PDO::FETCH_ASSOC);
-}
-else{
-    flash("There was a problem fetching the results");
+
+$query = "SELECT count(Responses.survey_id as GroupId, Responses.survey_id as rsurveyId, Survey.id as ssurveyId, Survey.title as SurveyTitle, Survey.user_id as suid, Responses.user_id) as total FROM Responses JOIN Survey on Responses.survey_id = Survey.id where Responses.user_id = :user_id";
+$params = [":user_id" => get_user_id()];
+paginate($query, $params, $per_page);
+$stmt = $db->prepare("SELECT Responses.survey_id as GroupId, Responses.survey_id as rsurveyId, Survey.id as ssurveyId, Survey.title as SurveyTitle, Survey.user_id as suid, Responses.user_id FROM Responses JOIN Survey on Responses.survey_id = Survey.id where Responses.user_id = :user_id LIMIT :offset, :count");
+$stmt->bindValue(":offset", $offset, PDO::PARAM_INT);
+$stmt->bindValue(":count", $per_page, PDO::PARAM_INT);
+$stmt->bindValue(":user_id", get_user_id());
+$r = $stmt->execute();
+$e = $stmt->errorInfo();
+if($e[0] != "00000"){
+    flash(var_export($e, true), "alert");
 }
 
-//$stmt = $db->prepare("SELECT survey_id as GroupId, question_id as QuestionId, survey_id as SurveyId, answer_id as AnswerId, user_id FROM Responses where user_id = :user_id");
-$stmt = $db->prepare("SELECT Responses.survey_id as GroupId, Responses.survey_id as rsurveyId, Survey.id as ssurveyId, Survey.title as SurveyTitle, Survey.user_id as suid, Responses.user_id FROM Responses JOIN Survey on Responses.survey_id = Survey.id where Responses.user_id = :user_id LIMIT 10");
+/*
+$stmt = $db->prepare("SELECT Responses.survey_id as GroupId, Responses.survey_id as rsurveyId, Survey.id as ssurveyId, Survey.title as SurveyTitle, Survey.user_id as suid, Responses.user_id FROM Responses JOIN Survey on Responses.survey_id = Survey.id where Responses.user_id = :user_id");
 $r = $stmt->execute([":user_id" => get_user_id()]);
+*/
 $responses = [];
 if ($r){
     $outcome = $stmt->fetchAll(PDO::FETCH_GROUP);
@@ -49,7 +53,7 @@ else{
 }
 
 //echo "<pre>" . var_export($outcome, true) . "</pre>";
-//echo "<pre>" . var_export($responses, true) . "</pre>";
+echo "<pre>" . var_export($responses, true) . "</pre>";
 //echo "<pre>" . var_export($taken, true) . "</pre>";
 ?>
     <div class="container-fluid">
@@ -88,5 +92,6 @@ else{
                 <?php endif; ?>
             </div>
         </div>
+        <?php include(__DIR__."/partials/pagination.php");?>
     </div>
 <?php require(__DIR__ . "/partials/flash.php"); ?>

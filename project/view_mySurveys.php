@@ -6,7 +6,7 @@ $per_page = 10;
 if (has_role("Admin")){
     $db = getDB();
     //$user = get_user_id();
-    $query = "SELECT count(*) as total FROM Survey Where Survey.user_id = :user_id LIMIT 10";
+    $query = "SELECT count(*) as total FROM Survey Where Survey.user_id = :user_id";
     $params = [":user_id" => get_user_id()];
     paginate($query, $params, $per_page);
     /*
@@ -22,7 +22,7 @@ if (has_role("Admin")){
     $stmt = $db->prepare("SELECT * FROM Survey Where Survey.user_id = :user_id LIMIT :offset, :count");
     $stmt->bindValue(":offset", $offset, PDO::PARAM_INT);
     $stmt->bindValue(":count", $per_page, PDO::PARAM_INT);
-    $stmt->bindValue(":id", get_user_id());
+    $stmt->bindValue(":user_id", get_user_id());
     $stmt->execute();
     $e = $stmt->errorInfo();
     if($e[0] != "00000"){
@@ -33,7 +33,7 @@ if (has_role("Admin")){
 else{
     $db = getDB();
     //$user = get_user_id();
-    $query = "SELECT count(*) FROM Survey Where Survey.user_id = :user_id LIMIT 10";
+    $query = "SELECT count(*) FROM Survey Where Survey.user_id = :user_id";
     $params = [":user_id" => get_user_id()];
     paginate($query, $params, $per_page);
     /*
@@ -49,7 +49,7 @@ else{
     $stmt = $db->prepare("SELECT * FROM Survey Where Survey.user_id = :user_id LIMIT :offset, :count");
     $stmt->bindValue(":offset", $offset, PDO::PARAM_INT);
     $stmt->bindValue(":count", $per_page, PDO::PARAM_INT);
-    $stmt->bindValue(":id", get_user_id());
+    $stmt->bindValue(":user_id", get_user_id());
     $stmt->execute();
     $e = $stmt->errorInfo();
     if($e[0] != "00000"){

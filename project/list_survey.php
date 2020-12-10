@@ -76,6 +76,10 @@ elseif (has_role("Admin")){
     else{
         flash("There was a problem fetching the results admin");
     }
+
+    $stmt = $db->prepare("Select * from Survey s where s.id not in (SELECT distinct survey_id from Responses where user_id = :user_id) ORDER BY RAND() LIMIT 1");
+    $r = $stmt->execute([":user_id" => get_user_id()]);
+    $random = $stmt->fetchAll(PDO::FETCH_ASSOC);
 }
 else{
     $db = getDB();
@@ -97,6 +101,10 @@ else{
     else{
         flash("There was a problem fetching the results");
     }
+
+    $stmt = $db->prepare("Select * from Survey s where s.id not in (SELECT distinct survey_id from Responses where user_id = :user_id) ORDER BY RAND() LIMIT 1");
+    $r = $stmt->execute([":user_id" => get_user_id()]);
+    $random = $stmt->fetchAll(PDO::FETCH_ASSOC);
 }
 
 $stmt = $db->prepare("SELECT Survey.title, Survey.id, count(Responses.survey_id) as total FROM Survey LEFT JOIN (SELECT distinct user_id, survey_id FROM Responses) as Responses on Survey.id = Responses.survey_id GROUP BY title");
@@ -107,6 +115,7 @@ if ($r){
 else{
     flash("There was a problem fetching the results");
 }
+//echo "<pre>" . var_export($random, true) . "</pre>";
 ?>
 <div class="container-fluid">
     <h3>List Surveys</h3>
@@ -114,6 +123,7 @@ else{
         <input class="form-control" name="query" placeholder="Search" value="<?php safer_echo($query); ?>"/>
         <input class="btn btn-primary" type="submit" value="Search" name="search"/>
     </form>
+    <a class="btn btn-success" type="button" href="take_survey.php?id=<?php safer_echo($random[0]['id']); ?>">Take Random Survey</a>
 
     <div class="results">
         <?php if (count($results) > 0): ?>

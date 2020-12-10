@@ -20,7 +20,7 @@ $results = [];
 $per_page = 10;
 
 $db = getDB();
-$query = "SELECT count(*) as total FROM Survey Where Survey.user_id = :user_id";
+$query = "SELECT count(*) as total FROM Survey Where Survey.user_id = :user_id AND visibility = 2";
 $params = [":user_id" => $pid];
 paginate($query, $params, $per_page);
 
@@ -52,6 +52,7 @@ else{
 
 <div class="container-fluid">
     <h3><?php echo $pusername . "'s " ?>Surveys</h3>
+    <a class="btn btn-secondary" type="button" href="view_profile.php?id=<?php safer_echo($pid); ?>">Back to profile</a>
     <div class="results">
         <?php if (count($results) > 0): ?>
         <div class="list-group">

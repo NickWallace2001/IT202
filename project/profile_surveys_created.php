@@ -1,30 +1,23 @@
 <?php require_once(__DIR__ . "/partials/nav.php"); ?>
 <?php
+if (isset($_GET["id"])){
+    $id = $_GET["id"];
+}
+if (isset($_GET["username"])){
+    $username = $_GET["username"];
+}
+?>
+<?php
 $results = [];
 
-if (has_role("Admin")){
-    $db = getDB();
-    $user = get_user_id();
-    $stmt = $db->prepare("SELECT * FROM Survey Where Survey.user_id = :user_id LIMIT 10");
-    $r = $stmt->execute([":user_id" => $user]);
-    if ($r) {
-        $results = $stmt->fetchALL(PDO::FETCH_ASSOC);
-    }
-    else{
-        flash("There was a problem fetching the results");
-    }
+$db = getDB();
+$stmt = $db->prepare("SELECT * FROM Survey Where Survey.user_id = :user_id AND visibility = 2 LIMIT 10");
+$r = $stmt->execute([":user_id" => $id]);
+if ($r) {
+    $results = $stmt->fetchALL(PDO::FETCH_ASSOC);
 }
 else{
-    $db = getDB();
-    $user = get_user_id();
-    $stmt = $db->prepare("SELECT * FROM Survey Where Survey.user_id = :user_id AND visibility <= 2 LIMIT 10");
-    $r = $stmt->execute([":user_id" => $user]);
-    if ($r) {
-        $results = $stmt->fetchALL(PDO::FETCH_ASSOC);
-    }
-    else{
-        flash("There was a problem fetching the results");
-    }
+    flash("There was a problem fetching the results");
 }
 
 $stmt = $db->prepare("SELECT Survey.title, Survey.id, count(Responses.survey_id) as total FROM Survey LEFT JOIN (SELECT distinct user_id, survey_id FROM Responses) as Responses on Survey.id = Responses.survey_id GROUP BY title");
@@ -38,7 +31,7 @@ else{
 ?>
 
 <div class="container-fluid">
-    <h3>Your Surveys</h3>
+    <h3><?php echo $username . "'s " ?>Surveys</h3>
     <div class="results">
         <?php if (count($results) > 0): ?>
         <div class="list-group">
@@ -56,13 +49,15 @@ else{
                                     <div><?php safer_echo($r["description"]); ?></div>
                                 </div>
                                 <div class="col">
-                                    <div>Visibility:</div>
-                                    <div><?php getVisibility($r["visibility"]); ?></div>
-                                </div>
-                                <div class="col">
-                                    <a class="btn btn-warning" type="button" href="edit_survey.php?id=<?php safer_echo($r['id']); ?>">Edit</a>
-                                    <a class="btn btn-success" type="button" href="view_survey.php?id=<?php safer_echo($r['id']); ?>">View</a>
-                                    <a class="btn btn-primary" type="button" href="results.php?id=<?php safer_echo($r['id']); ?>">View Results</a>
+                                    <?php if (has_role("Admin")): ?>
+                                        <a class="btn btn-warning" type="button" href="edit_survey.php?id=<?php safer_echo($r['id']); ?>">Edit</a>
+                                    <?php endif; ?>
+                                    <?php if (intval($ind["total"]) == 0): ?>
+                                        <a class="btn btn-success" type="button" href="take_survey.php?id=<?php safer_echo($r['id']); ?>">Take Survey</a>
+                                    <?php endif; ?>
+                                    <?php if (intval($ind["total"]) > 0): ?>
+                                        <a class="btn btn-primary" type="button" href="results.php?id=<?php safer_echo($r['id']); ?>">View Results</a>
+                                    <?php endif; ?>
                                 </div>
                                 <div class="col">
                                     <div>Times Taken:</div> <div><?php safer_echo($ind["total"]); ?></div>
@@ -78,3 +73,4 @@ else{
         </div>
     </div>
 </div>
+<?php require_once(__DIR__ . "/partials/flash.php");

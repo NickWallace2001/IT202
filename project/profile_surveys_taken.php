@@ -1,21 +1,16 @@
 <?php require_once(__DIR__ . "/partials/nav.php"); ?>
 <?php
-$results = [];
-
+if (isset($_GET["id"])){
+    $id = $_GET["id"];
+}
+if (isset($_GET["username"])){
+    $username = $_GET["username"];
+}
+?>
+<?php
 $db = getDB();
-$user = get_user_id();
-$stmt = $db->prepare("SELECT * From Survey");
-$r = $stmt->execute([":user_id" => $user]);
-if ($r){
-    $results = $stmt->fetchALL(PDO::FETCH_ASSOC);
-}
-else{
-    flash("There was a problem fetching the results");
-}
-
-//$stmt = $db->prepare("SELECT survey_id as GroupId, question_id as QuestionId, survey_id as SurveyId, answer_id as AnswerId, user_id FROM Responses where user_id = :user_id");
 $stmt = $db->prepare("SELECT Responses.survey_id as GroupId, Responses.survey_id as rsurveyId, Survey.id as ssurveyId, Survey.title as SurveyTitle, Survey.user_id as suid, Responses.user_id FROM Responses JOIN Survey on Responses.survey_id = Survey.id where Responses.user_id = :user_id LIMIT 10");
-$r = $stmt->execute([":user_id" => get_user_id()]);
+$r = $stmt->execute([":user_id" => $id]);
 $responses = [];
 if ($r){
     $outcome = $stmt->fetchAll(PDO::FETCH_GROUP);
@@ -53,7 +48,7 @@ else{
 //echo "<pre>" . var_export($taken, true) . "</pre>";
 ?>
     <div class="container-fluid">
-        <h3>Surveys You've Taken</h3>
+        <h3>Surveys <?php echo $username ?> Has Taken</h3>
         <div class="results">
             <?php if (count($responses) > 0): ?>
             <div class="list-group">
@@ -67,13 +62,15 @@ else{
                                         <div><?php safer_echo($index[1]); ?></div>
                                     </div>
                                     <div class="col">
-                                        <a class="btn btn-info" type="button" href="view_profile.php?id=<?php safer_echo($index[2]); ?>">View Creator's Profile</a>
-                                    </div>
-                                    <div class="col">
                                         <?php if (has_role("Admin")): ?>
                                             <a class="btn btn-warning" type="button" href="edit_survey.php?id=<?php safer_echo($index[0]); ?>">Edit</a>
                                         <?php endif; ?>
-                                        <a class="btn btn-primary" type="button" href="results.php?id=<?php safer_echo($index[0]); ?>">View Results</a>
+                                        <?php if (intval($ind["total"]) == 0): ?>
+                                            <a class="btn btn-success" type="button" href="take_survey.php?id=<?php safer_echo($index[2]); ?>">Take Survey</a>
+                                        <?php endif; ?>
+                                        <?php if (intval($ind["total"]) > 0): ?>
+                                            <a class="btn btn-primary" type="button" href="results.php?id=<?php safer_echo($index[2]); ?>">View Results</a>
+                                        <?php endif; ?>
                                     </div>
                                     <div class="col">
                                         <div>Times Taken:</div> <div><?php safer_echo($ind["total"]); ?></div>

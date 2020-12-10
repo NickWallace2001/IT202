@@ -81,6 +81,9 @@ function getVisibility($n){
 		case 2:
 			echo "Public";
 			break;
+        case 3:
+            echo "Disabled";
+            break;
 		default:
 			echo "Unsupported visibility: " . safer_echo($n);
 			break;

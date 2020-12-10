@@ -8,7 +8,18 @@ if (isset($_POST["query"])){
 ?>
 <?php
 
-if (isset($_POST["search"]) && !empty($query)){
+if (isset($_POST["search"]) && !empty($query) && has_role("Admin")){
+$db = getDB();
+$stmt = $db->prepare("SELECT * FROM Survey Where (title like :q) LIMIT 10");
+$r = $stmt->execute([":q" => "%$query%"]);
+if ($r) {
+    $results = $stmt->fetchALL(PDO::FETCH_ASSOC);
+}
+else{
+    flash("There was a problem fetching the results");
+}
+}
+elseif (isset($_POST["search"]) && !empty($query)){
     $db = getDB();
     $stmt = $db->prepare("SELECT * FROM Survey Where visibility = 2 AND (title like :q) LIMIT 10");
     $r = $stmt->execute([":q" => "%$query%"]);
@@ -19,10 +30,21 @@ if (isset($_POST["search"]) && !empty($query)){
         flash("There was a problem fetching the results");
     }
 }
+elseif (has_role("Admin")){
+    $db = getDB();
+    $stmt = $db->prepare("SELECT * FROM Survey LIMIT 10");
+    $r = $stmt->execute([":q" => "%$query%"]);
+    if ($r) {
+        $results = $stmt->fetchALL(PDO::FETCH_ASSOC);
+    }
+    else{
+        flash("There was a problem fetching the results admin");
+    }
+}
 else{
     $db = getDB();
     $stmt = $db->prepare("SELECT * FROM Survey Where visibility = 2 LIMIT 10");
-    $r = $stmt->execute([":q" => "%$query%"]);
+    $r = $stmt->execute();
     if ($r) {
         $results = $stmt->fetchALL(PDO::FETCH_ASSOC);
     }
@@ -59,8 +81,22 @@ else{
                                 <div>Title:</div>
                                 <div><?php safer_echo($r["title"]); ?></div>
                             </div>
+                            <?php if (has_role("Admin")): ?>
+                                <div class="col">
+                                    <div>Visibility:</div>
+                                    <div><?php safer_echo(getVisibility($r["visibility"])); ?></div>
+                                </div>
+                            <?php endif; ?>
                             <div class="col">
-                                <a class="btn btn-success" type="button" href="take_survey.php?id=<?php safer_echo($r['id']); ?>">Take Survey</a>
+                                <a class="btn btn-info" type="button" href="view_profile.php?id=<?php safer_echo($r['user_id']); ?>&query=<?php echo $query ?>">View Creator's Profile</a>
+                            </div>
+                            <div class="col">
+                                <?php if (has_role("Admin")): ?>
+                                    <a class="btn btn-warning" type="button" href="edit_survey.php?id=<?php safer_echo($r['id']); ?>">Edit</a>
+                                <?php endif; ?>
+                                <?php if ($r["visibility"] == 2): ?>
+                                    <a class="btn btn-success" type="button" href="take_survey.php?id=<?php safer_echo($r['id']); ?>">Take Survey</a>
+                                <?php endif; ?>
                                 <?php if (intval($ind["total"]) > 0): ?>
                                     <a class="btn btn-primary" type="button" href="results.php?id=<?php safer_echo($r['id']); ?>">View Results</a>
                                 <?php endif; ?>

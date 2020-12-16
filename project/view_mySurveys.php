@@ -33,7 +33,7 @@ if (has_role("Admin")){
 else{
     $db = getDB();
     //$user = get_user_id();
-    $query = "SELECT count(*) FROM Survey Where Survey.user_id = :user_id";
+    $query = "SELECT count(*) as total FROM Survey Where Survey.user_id = :user_id AND visibility <=2";
     $params = [":user_id" => get_user_id()];
     paginate($query, $params, $per_page);
     /*
@@ -46,7 +46,7 @@ else{
         flash("There was a problem fetching the results");
     }
     */
-    $stmt = $db->prepare("SELECT * FROM Survey Where Survey.user_id = :user_id LIMIT :offset, :count");
+    $stmt = $db->prepare("SELECT * FROM Survey Where Survey.user_id = :user_id AND visibility <=2 LIMIT :offset, :count");
     $stmt->bindValue(":offset", $offset, PDO::PARAM_INT);
     $stmt->bindValue(":count", $per_page, PDO::PARAM_INT);
     $stmt->bindValue(":user_id", get_user_id());

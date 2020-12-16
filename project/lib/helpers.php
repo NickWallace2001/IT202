@@ -81,6 +81,9 @@ function getVisibility($n){
 		case 2:
 			echo "Public";
 			break;
+        case 3:
+            echo "Disabled";
+            break;
 		default:
 			echo "Unsupported visibility: " . safer_echo($n);
 			break;
@@ -118,5 +121,32 @@ function deleteAnswer($answer){
         $e = $stmt->errorInfo();
         flash("Error updating:". var_export($e, true));
     }
+}
+
+function paginate($query, $params = [], $per_page = 10) {
+    global $page;
+    if (isset($_GET["page"])) {
+        try {
+            $page = (int)$_GET["page"];
+        }
+        catch (Exception $e) {
+            $page = 1;
+        }
+    }
+    else {
+        $page = 1;
+    }
+    $db = getDB();
+    $stmt = $db->prepare($query);
+    $stmt->execute($params);
+    $result = $stmt->fetch(PDO::FETCH_ASSOC);
+    $total = 0;
+    if ($result) {
+        $total = (int)$result["total"];
+    }
+    global $total_pages;
+    $total_pages = ceil($total / $per_page);
+    global $offset;
+    $offset = ($page - 1) * $per_page;
 }
 ?>

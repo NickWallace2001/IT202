@@ -10,6 +10,10 @@ if (!is_logged_in()) {
 }
 
 $db = getDB();
+$stmt = $db->prepare("SELECT visibility from Users WHERE id = :id LIMIT 1");
+$stmt->execute([":id" => get_user_id()]);
+$vis_result = $stmt->fetch(PDO::FETCH_ASSOC);
+$visibility = $vis_result["visibility"];
 //save data if we submitted the form
 if (isset($_POST["saved"])) {
     $isValid = true;
@@ -64,8 +68,9 @@ if (isset($_POST["saved"])) {
         }
     }
     if ($isValid) {
-        $stmt = $db->prepare("UPDATE Users set email = :email, username= :username where id = :id");
-        $r = $stmt->execute([":email" => $newEmail, ":username" => $newUsername, ":id" => get_user_id()]);
+        $visibility = $_POST["visibility"];
+        $stmt = $db->prepare("UPDATE Users set email = :email, username= :username, visibility= :visibility where id = :id");
+        $r = $stmt->execute([":email" => $newEmail, ":username" => $newUsername, ":id" => get_user_id(), ":visibility" => $visibility]);
         if ($r) {
             flash("Updated profile");
         }
@@ -90,12 +95,13 @@ if (isset($_POST["saved"])) {
             }
         }
 //fetch/select fresh data in case anything changed
-        $stmt = $db->prepare("SELECT email, username from Users WHERE id = :id LIMIT 1");
+        $stmt = $db->prepare("SELECT email, username, visibility from Users WHERE id = :id LIMIT 1");
         $stmt->execute([":id" => get_user_id()]);
         $result = $stmt->fetch(PDO::FETCH_ASSOC);
         if ($result) {
             $email = $result["email"];
             $username = $result["username"];
+            $visibility = $result["visibility"];
             //let's update our session too
             $_SESSION["user"]["email"] = $email;
             $_SESSION["user"]["username"] = $username;
@@ -106,7 +112,7 @@ if (isset($_POST["saved"])) {
     }
 }
 
-
+//echo "<pre>" . var_export($result, true) . "</pre>";
 ?>
 <div class="container-fluid">
     <form method="POST">
@@ -117,6 +123,13 @@ if (isset($_POST["saved"])) {
         <div class="form-group">
             <label for="username">Username</label>
             <input class="form-control" type="text" maxlength="60" name="username" value="<?php safer_echo(get_username()); ?>"/>
+        </div>
+        <div class="form-group">
+            <label>Visibility</label>
+                <select class="form-control" name="visibility" value="<?php echo getVisibility($visibility);//$result["visibility"];?>">
+                    <option value="1" <?php echo ($visibility == "1"?'selected=selected"selected"':'');?>>Private</option>
+                    <option value="2" <?php echo ($visibility == "2"?'selected=selected"selected"':'');?>>Public</option>
+                </select>
         </div>
         <!-- DO NOT PRELOAD PASSWORD-->
         <div class="form-group">

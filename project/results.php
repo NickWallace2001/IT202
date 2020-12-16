@@ -109,7 +109,11 @@ foreach ($questions as $index => $question){
                     <div>
                         <?php foreach ($question["answers"] as $answer): ?>
                             <?php $aid = $answer["answerId"]; ?>
-                                    <p class="text-center"><?php safer_echo($answer["answer"]); ?><b><?php echo " ". (round(((count($math[$qid][$aid])/count($math[$qid]["answer counter"]))*100))) . "%"; ?></p></b>
+                                    <p class="text-center"><?php safer_echo($answer["answer"]); ?>
+                                        <div class="progress">
+                                            <div class="progress-bar" role="progressbar" style="width: <?php echo (round(((count($math[$qid][$aid])/count($math[$qid]["answer counter"]))*100))) . "%"; ?>;" aria-valuenow="<?php echo (round(((count($math[$qid][$aid])/count($math[$qid]["answer counter"]))*100))) ?>" aria-valuemin="0" aria-valuemax="100"><b><?php echo " ". (round(((count($math[$qid][$aid])/count($math[$qid]["answer counter"]))*100))) . "%"; ?></b></div>
+                                        </div>
+                                        </p>
                         <?php endforeach; ?>
                     </div>
                 </div>
